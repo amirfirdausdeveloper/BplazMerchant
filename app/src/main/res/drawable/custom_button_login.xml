@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="false">
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="@color/colorKuning"
+                android:endColor="@color/colorKuning"/>
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+    <item android:state_pressed="true">
+        <shape>
+            <gradient
+                android:startColor="@color/colorKuningClick"
+                android:endColor="@color/colorKuningClick"/>
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
+</selector>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="colorBplaz">#2B3730</color>
+    <color name="colorBplaz2">#223027</color>
+    <color name="colorBplazHijau">#39B54A</color>
+    <color name="colorKuning">#FFBA05</color>
+    <color name="colorKuningClick2">#F1AF04</color>
+    <color name="colorKuningClick">#705302</color>
+    <color name="colorBplazHijauPresss">#267430</color>
+    <color name="colorBlackSikit">#242424</color>
+    <color name="colorBlackSikit2">#494949</color>
+    <color name="ColorgrayLine">#CCCCCC</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorWhiteSikit">#F0F0F0</color>
+    <color name="colorGray">#C2C2C2</color>
+</resources>
