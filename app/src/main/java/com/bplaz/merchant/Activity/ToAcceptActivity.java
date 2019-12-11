@@ -1,33 +1,32 @@
-package com.bplaz.merchant.Fragment;
+package com.bplaz.merchant.Activity;
 
-
-import android.content.Intent;
-import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.view.LayoutInflater;
+import android.content.Intent;
+import android.media.Image;
+import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.bplaz.merchant.Activity.CreateSalesActivity;
-import com.bplaz.merchant.Adapter.ProductListAdapter;
 import com.bplaz.merchant.Adapter.SalesListAdapter;
-import com.bplaz.merchant.Class.ProductListClass;
+import com.bplaz.merchant.Adapter.ToAcceptAdapter;
 import com.bplaz.merchant.Class.SalesListClass;
 import com.bplaz.merchant.Class.StandardProgressDialog;
+import com.bplaz.merchant.Class.ToAcceptClass;
+import com.bplaz.merchant.Class.TypeFaceClass;
 import com.bplaz.merchant.Preferance.PreferenceManagerLogin;
 import com.bplaz.merchant.R;
 import com.bplaz.merchant.URL.UrlClass;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,36 +39,35 @@ import java.util.Map;
 
 import static com.android.volley.Request.Method.GET;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class SalesFragment extends Fragment {
+public class ToAcceptActivity extends AppCompatActivity {
 
     SwipeRefreshLayout mSwipeRefreshLayout;
     RecyclerView recyclerView;
     PreferenceManagerLogin session;
     StandardProgressDialog standardProgressDialog;
     String token;
-    List<SalesListClass> salesListClasses;
-    private SalesListAdapter salesListAdapter;
-    FloatingActionButton floatingActionButton;
+    List<ToAcceptClass> salesListClasses;
+    private ToAcceptAdapter salesListAdapter;
+    ImageView imageView_back;
+    TextView textView_title;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_sales, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_to_accept);
 
         //GET SESSION
-        session = new PreferenceManagerLogin(getActivity());
-        standardProgressDialog = new StandardProgressDialog(getActivity().getWindow().getContext());
+        session = new PreferenceManagerLogin(getApplicationContext());
+        standardProgressDialog = new StandardProgressDialog(this.getWindow().getContext());
+        imageView_back = findViewById(R.id.imageView_back);
 
         HashMap<String, String> user = session.getUserDetails();
         token = user.get(PreferenceManagerLogin.KEY_TOKEN);
 
-        mSwipeRefreshLayout = v.findViewById(R.id.swipeToRefresh);
-        floatingActionButton = v.findViewById(R.id.floatingActionButton);
-        recyclerView = v.findViewById(R.id.recyclerView);
+        mSwipeRefreshLayout = findViewById(R.id.swipeToRefresh);
+        recyclerView = findViewById(R.id.recyclerView);
+        textView_title = findViewById(R.id.textView_title);
+        TypeFaceClass.setTypeFaceTextViewBold(textView_title,getApplicationContext());
 
         //SWIPE REFRESH
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -80,30 +78,31 @@ public class SalesFragment extends Fragment {
             }
         });
 
-        //ADD SALES
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+        imageView_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent next = new Intent(getActivity(), CreateSalesActivity.class);
-                startActivity(next);
-                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                onBackPressed();
+                ToAcceptActivity.this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             }
         });
 
-        getList();
+    }
 
-        return v;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getList();
     }
 
     private void getList(){
         recyclerView.setHasFixedSize(false);
         salesListClasses = new ArrayList<>();
-        salesListAdapter = new SalesListAdapter(getContext(), salesListClasses,getActivity());
-        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        salesListAdapter = new ToAcceptAdapter(getApplicationContext(), salesListClasses,ToAcceptActivity.this);
+        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(horizontalLayoutManager);
         recyclerView.setAdapter(salesListAdapter);
 
-        StringRequest stringRequest = new StringRequest(GET, UrlClass.get_sales_URL,
+        StringRequest stringRequest = new StringRequest(GET, UrlClass.get_sales_URL+"?status=1",
                 new com.android.volley.Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -180,13 +179,10 @@ public class SalesFragment extends Fragment {
                                 if(salesOBJ.getString("status").equals("14")){
                                     status_words = sale_status.getString("14");
                                 }
-                                if(salesOBJ.getString("status").equals("15")){
-                                    status_words = "SALES CREATED BY PARTNER";
-                                }
 
 
 
-                                salesListClasses.add(new SalesListClass(
+                                salesListClasses.add(new ToAcceptClass(
                                         salesOBJ.getString("id"),
                                         status_words.toUpperCase(),
                                         salesOBJ.getString("assign_date"),
@@ -195,7 +191,7 @@ public class SalesFragment extends Fragment {
                                         product_name
                                 ));
 
-                                salesListAdapter = new SalesListAdapter(getContext(), salesListClasses,getActivity());
+                                salesListAdapter = new ToAcceptAdapter(getApplicationContext(), salesListClasses, ToAcceptActivity.this);
                                 recyclerView.setAdapter(salesListAdapter);
                             }
 
@@ -220,7 +216,7 @@ public class SalesFragment extends Fragment {
             }
 
         };
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         requestQueue.add(stringRequest);
     }
 }

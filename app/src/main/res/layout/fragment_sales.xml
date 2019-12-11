@@ -23,7 +23,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="SALES"
-                android:textColor="@android:color/white"
+                android:textColor="@color/colorKuningClick2"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -57,7 +57,7 @@
             android:backgroundTint="@color/colorKuning"
             android:clickable="true"
             android:src="@drawable/icon_add_plus"
-            app:backgroundTint="#FFBA05" />
+            app:backgroundTint="@color/colorKuning" />
     </LinearLayout>
 
 </FrameLayout>

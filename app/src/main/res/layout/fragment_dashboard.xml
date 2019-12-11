@@ -23,11 +23,11 @@
                 android:id="@+id/textView_header"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="DASHBOARD"
+                android:text="DASHBOARD MERCHANT"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:gravity="center"
-                android:textColor="@android:color/white"/>
+                android:textColor="@color/colorKuningClick2"/>
         </LinearLayout>
 
         <LinearLayout

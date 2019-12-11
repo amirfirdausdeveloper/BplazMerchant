@@ -24,7 +24,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:text="MANAGE"
-                android:textColor="@android:color/white"
+                android:textColor="@color/colorKuningClick2"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -100,6 +100,6 @@
             android:layout_height="wrap_content"
             android:text="LOGOUT"
             android:background="@color/colorKuning"
-            android:textColor="@android:color/white"/>
+            android:textColor="@color/colorKuningClick2"/>
     </LinearLayout>
 </FrameLayout>

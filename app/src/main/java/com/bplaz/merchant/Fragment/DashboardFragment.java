@@ -3,6 +3,7 @@ package com.bplaz.merchant.Fragment;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -19,6 +20,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bplaz.merchant.Activity.CreateSalesActivity;
+import com.bplaz.merchant.Activity.ToAcceptActivity;
 import com.bplaz.merchant.Class.StandardProgressDialog;
 import com.bplaz.merchant.Class.TypeFaceClass;
 import com.bplaz.merchant.Preferance.PreferenceManagerLogin;
@@ -83,6 +86,14 @@ public class DashboardFragment extends Fragment {
         setFont();
 
 
+        linear_to_accept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent next = new Intent(getActivity(), ToAcceptActivity.class);
+                startActivity(next);
+                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
+        });
         return v;
     }
 

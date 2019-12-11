@@ -11,7 +11,9 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bplaz.merchant.Activity.SalesDetailsActivity;
+import com.bplaz.merchant.Activity.ToAcceptActivity;
 import com.bplaz.merchant.Class.SalesListClass;
+import com.bplaz.merchant.Class.ToAcceptClass;
 import com.bplaz.merchant.Class.TypeFaceClass;
 import com.bplaz.merchant.R;
 
@@ -20,13 +22,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class SalesListAdapter extends RecyclerView.Adapter<SalesListAdapter.ProductViewHolder> {
+public class ToAcceptAdapter extends RecyclerView.Adapter<ToAcceptAdapter.ProductViewHolder> {
 
     private Context mCtx;
-    public static List<SalesListClass> productListClassList;
+    public static List<ToAcceptClass> productListClassList;
     Activity activity;
 
-    public SalesListAdapter(Context mCtx, List<SalesListClass> jobByMonthList, Activity activity) {
+    public ToAcceptAdapter(Context mCtx, List<ToAcceptClass> jobByMonthList, Activity activity) {
         this.mCtx = mCtx;
         this.productListClassList = jobByMonthList;
         this.activity = activity;
@@ -45,7 +47,7 @@ public class SalesListAdapter extends RecyclerView.Adapter<SalesListAdapter.Prod
 
     @Override
     public void onBindViewHolder(final ProductViewHolder holder, final int position) {
-        final SalesListClass productListClass = productListClassList.get(position);
+        final ToAcceptClass productListClass = productListClassList.get(position);
 
         holder.textView_status.setText(productListClass.getStatus_job());
         if(productListClass.getAssign_date().equals("null")){
@@ -59,20 +61,13 @@ public class SalesListAdapter extends RecyclerView.Adapter<SalesListAdapter.Prod
         holder.textView_product.setText(productListClass.getProduct_name());
 
 
-
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String s = "assign by admin (Pending accept by partner)";
                 Intent next = new Intent(mCtx.getApplicationContext(), SalesDetailsActivity.class);
                 next.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 next.putExtra("id",productListClass.getId());
-                if(productListClass.getStatus_job().toLowerCase().equals(s.toLowerCase())){
-                    next.putExtra("status","accept");
-                }else {
-                    next.putExtra("status","view");
-                }
-
+                next.putExtra("status","accept");
                 mCtx.startActivity(next);
                 activity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }

@@ -20,5 +20,20 @@ public class UrlClass {
     //GET LIST SALES
     public static String get_sales_URL = main_URL+"merchant_sales.json";
 
+    //GET LIST VEHICLE MANUFACTURE
+    public static String get_list_vehicle_manufacture = main_URL+"get/manufacturer.json";
+
+    //GET LIST VEHICLE MANUFACTURE
+    public static String get_list_vehicle_model = main_URL+"get/vehicle/";
+
+    //GET SALES DETAILS
+    public static String get_sales_details_URL = main_URL+"merchant_sales/";
+
+    //ACCEPT JOB
+    public static String accept_job_URL = main_URL+"merchant_sales/accept/";
+
+    //REJECT JOB
+    public static String reject_job_URL = main_URL+"merchant_sales/reject/";
+
 
 }
