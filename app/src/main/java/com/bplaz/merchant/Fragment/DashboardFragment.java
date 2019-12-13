@@ -21,6 +21,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bplaz.merchant.Activity.CreateSalesActivity;
+import com.bplaz.merchant.Activity.MainActivity;
 import com.bplaz.merchant.Activity.ToAcceptActivity;
 import com.bplaz.merchant.Class.StandardProgressDialog;
 import com.bplaz.merchant.Class.TypeFaceClass;
@@ -36,6 +37,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.android.volley.Request.Method.GET;
+import static com.bplaz.merchant.Activity.MainActivity.active;
+import static com.bplaz.merchant.Activity.MainActivity.fm;
+import static com.bplaz.merchant.Activity.MainActivity.fragment1;
+import static com.bplaz.merchant.Activity.MainActivity.fragment2;
+import static com.bplaz.merchant.Activity.MainActivity.fragment3;
+import static com.bplaz.merchant.Activity.MainActivity.fragment5;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -94,6 +101,15 @@ public class DashboardFragment extends Fragment {
                 getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
+
+        linear_to_completed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.navigation.setSelectedItemId(R.id.sales);
+                fm.beginTransaction().hide(active).show(fragment2).commit();
+                active = fragment2;
+            }
+        });
         return v;
     }
 
@@ -105,6 +121,7 @@ public class DashboardFragment extends Fragment {
     }
 
     private void declare(View v){
+        linear_to_completed = v.findViewById(R.id.linear_to_completed);
         textView_header = v.findViewById(R.id.textView_header);
         textView_rating_value = v.findViewById(R.id.textView_rating_value);
         textView_rating = v.findViewById(R.id.textView_rating);

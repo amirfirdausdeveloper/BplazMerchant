@@ -65,14 +65,22 @@
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:gravity="center"
-                        android:layout_marginLeft="10dp"
+                    <LinearLayout
+                        android:layout_marginLeft="15dp"
                         android:id="@+id/textView_view"
+                        android:padding="5dp"
+                        android:background="@drawable/custom_linear_add_product"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="View product / services items"
-                        android:textColor="@android:color/holo_blue_dark"/>
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="View product / services items"
+                            android:textColor="@android:color/white" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout

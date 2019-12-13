@@ -1,7 +1,10 @@
 package com.bplaz.merchant.Adapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,24 +13,54 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.bplaz.merchant.Activity.CreateProductActivity;
 import com.bplaz.merchant.Class.ProductListClass;
+import com.bplaz.merchant.Class.StandardProgressDialog;
 import com.bplaz.merchant.Class.TypeFaceClass;
+import com.bplaz.merchant.Fragment.ProductFragment;
+import com.bplaz.merchant.Preferance.PreferenceManagerLogin;
 import com.bplaz.merchant.R;
+import com.bplaz.merchant.URL.UrlClass;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static com.android.volley.Request.Method.DELETE;
+import static com.android.volley.Request.Method.POST;
+import static com.bplaz.merchant.Fragment.ProductFragment.getProduct;
 
 public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.ProductViewHolder> {
 
     private Context mCtx;
     public static List<ProductListClass> productListClassList;
     Activity activity;
+    PreferenceManagerLogin session;
+    StandardProgressDialog standardProgressDialog;
+    String token;
 
     public ProductListAdapter(Context mCtx, List<ProductListClass> jobByMonthList, Activity activity) {
+        //GET SESSION
+        session = new PreferenceManagerLogin(mCtx.getApplicationContext());
+        standardProgressDialog = new StandardProgressDialog(activity.getWindow().getContext());
+
+        HashMap<String, String> user = session.getUserDetails();
+        token = user.get(PreferenceManagerLogin.KEY_TOKEN);
+
         this.mCtx = mCtx;
         this.productListClassList = jobByMonthList;
         this.activity = activity;
@@ -101,9 +134,61 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
         if(productListClass.getImageURL().equals(null) || productListClass.getImageURL().equals("null") || productListClass.getImageURL().equals("")){
 
         }else {
-            Picasso.get().load(productListClass.getImageURL()).networkPolicy(NetworkPolicy.NO_CACHE)
+            Picasso.get().load("https://merchant.bplaz.com/"+productListClass.getImageURL()).networkPolicy(NetworkPolicy.NO_CACHE)
                     .memoryPolicy(MemoryPolicy.NO_CACHE).into(holder.imageView_product);
         }
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(activity)
+                        .setCancelable(true)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setMessage("Choose edit or delete product?")
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                new AlertDialog.Builder(activity)
+                                        .setCancelable(false)
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .setMessage("Are you sure want to delete "+productListClass.getProductNAME()+" ?")
+                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                delete(productListClass.getProductID());
+
+
+                                            }
+                                        })
+                                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        })
+                                        .show();
+                            }
+                        })
+                        .setNegativeButton("Edit", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent next = new Intent(activity,CreateProductActivity.class);
+                                next.putExtra("id",productListClass.getProductID());
+                                next.putExtra("product_name",productListClass.getProductNAME());
+                                next.putExtra("product_brand",productListClass.getProductBRAND());
+                                next.putExtra("product_manu",productListClass.getProductMANUFACTURE());
+                                next.putExtra("service",productListClass.getSevice());
+                                next.putExtra("service_type",productListClass.getServiceTYPE());
+                                next.putExtra("availability",productListClass.getAvailable());
+                                next.putExtra("base_price",productListClass.getBase_price());
+                                next.putExtra("retail_price",productListClass.getRetail_price());
+                                mCtx.startActivity(next);
+                                activity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                            }
+                        })
+                        .show();
+            }
+        });
     }
 
 
@@ -156,5 +241,51 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
         }
     }
 
+    public void delete(String delete_id){
+        StringRequest stringRequest = new StringRequest(DELETE, UrlClass.delete_product_URL+delete_id+".json",
+                new com.android.volley.Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        standardProgressDialog.dismiss();
+                        try {
+                            JSONObject object = new JSONObject(response);
+                            JSONObject data = new JSONObject(object.getString("data"));
+
+                            new AlertDialog.Builder(activity)
+                                    .setCancelable(false)
+                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .setMessage(data.getString("message"))
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            getProduct();
+                                        }
+                                    })
+                                    .show();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new com.android.volley.Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        standardProgressDialog.dismiss();
+                    }
+                }) {
+
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Accept", "application/json");
+                headers.put("Content-Type", "application/x-www-form-urlencoded");
+                headers.put("Authorization", "Bearer "+token);
+                return headers;
+            }
+
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(mCtx.getApplicationContext());
+        requestQueue.add(stringRequest);
+    }
 
 }

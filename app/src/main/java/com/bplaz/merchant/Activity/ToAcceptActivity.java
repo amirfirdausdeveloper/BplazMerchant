@@ -5,22 +5,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.bplaz.merchant.Adapter.SalesListAdapter;
 import com.bplaz.merchant.Adapter.ToAcceptAdapter;
-import com.bplaz.merchant.Class.SalesListClass;
 import com.bplaz.merchant.Class.StandardProgressDialog;
 import com.bplaz.merchant.Class.ToAcceptClass;
 import com.bplaz.merchant.Class.TypeFaceClass;
@@ -50,6 +45,7 @@ public class ToAcceptActivity extends AppCompatActivity {
     private ToAcceptAdapter salesListAdapter;
     ImageView imageView_back;
     TextView textView_title;
+    String totalCOunt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +69,7 @@ public class ToAcceptActivity extends AppCompatActivity {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getList();
+                getTotal();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -91,10 +87,10 @@ public class ToAcceptActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        getList();
+        getTotal();
     }
 
-    private void getList(){
+    private void getList(String totalCOunt){
         recyclerView.setHasFixedSize(false);
         salesListClasses = new ArrayList<>();
         salesListAdapter = new ToAcceptAdapter(getApplicationContext(), salesListClasses,ToAcceptActivity.this);
@@ -102,7 +98,7 @@ public class ToAcceptActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(horizontalLayoutManager);
         recyclerView.setAdapter(salesListAdapter);
 
-        StringRequest stringRequest = new StringRequest(GET, UrlClass.get_sales_URL+"?status=1",
+        StringRequest stringRequest = new StringRequest(GET, UrlClass.get_sales_URL+"?status=1&limit="+totalCOunt,
                 new com.android.volley.Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -195,6 +191,49 @@ public class ToAcceptActivity extends AppCompatActivity {
                                 recyclerView.setAdapter(salesListAdapter);
                             }
 
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new com.android.volley.Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        standardProgressDialog.dismiss();
+                    }
+                }) {
+
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Accept", "application/json");
+                headers.put("Content-Type", "application/x-www-form-urlencoded");
+                headers.put("Authorization", "Bearer "+token);
+                return headers;
+            }
+
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(stringRequest);
+    }
+
+    private void getTotal(){
+        recyclerView.setHasFixedSize(false);
+        salesListClasses = new ArrayList<>();
+        salesListAdapter = new ToAcceptAdapter(getApplicationContext(), salesListClasses,ToAcceptActivity.this);
+        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(horizontalLayoutManager);
+        recyclerView.setAdapter(salesListAdapter);
+
+        StringRequest stringRequest = new StringRequest(GET, UrlClass.get_sales_URL+"?status=1",
+                new com.android.volley.Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        standardProgressDialog.dismiss();
+                        try {
+                            JSONObject object = new JSONObject(response);
+                            JSONObject sales = new JSONObject(object.getString("paging"));
+                            totalCOunt = sales.getString("count");
+                            getList(totalCOunt);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

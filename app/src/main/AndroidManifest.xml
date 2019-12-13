@@ -17,9 +17,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true">
-        <activity android:name=".Activity.SalesDetailsActivity"
+        <activity android:name=".Activity.CreateProductActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoActionBarKuning" ></activity>
+            android:theme="@style/AppThemeNoActionBarKuning"></activity>
+        <activity
+            android:name=".Activity.SalesDetailsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeNoActionBarKuning" />
         <activity
             android:name=".Activity.ToAcceptActivity"
             android:screenOrientation="portrait"

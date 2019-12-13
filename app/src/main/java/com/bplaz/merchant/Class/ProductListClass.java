@@ -10,10 +10,12 @@ public class ProductListClass {
     private String sevice;
     private String available;
     private String imageURL;
+    private String retail_price;
+    private String base_price;
 
 
     public ProductListClass(String productID, String productNAME, String productBRAND, String productMANUFACTURE, String serviceTYPE, String sevice,
-                            String available,String imageURL){
+                            String available,String imageURL,String retail_price,String base_price){
         this.productID = productID;
         this.productNAME = productNAME;
         this.productBRAND = productBRAND;
@@ -22,8 +24,19 @@ public class ProductListClass {
         this.sevice = sevice;
         this.available = available;
         this.imageURL = imageURL;
+        this.retail_price = retail_price;
+        this.base_price = base_price;
 
     }
+
+    public String getBase_price() {
+        return base_price;
+    }
+
+    public String getRetail_price() {
+        return retail_price;
+    }
+
 
     public String getImageURL() {
         return imageURL;

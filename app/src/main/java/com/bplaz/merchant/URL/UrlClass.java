@@ -3,7 +3,8 @@ package com.bplaz.merchant.URL;
 public class UrlClass {
 
     //MAIN URL
-    public static String main_URL = "https://dev.merchant.bplaz.com/api/v1/";
+    public static String main_URL = "https://dev." +
+            "merchant.bplaz.com/api/v1/";
 
     //LOGIN
     public static String login_URL = main_URL+"merchant_sales/token.json";
@@ -13,6 +14,9 @@ public class UrlClass {
 
     //GET LIST PRODUCT
     public static String get_list_product_URL = main_URL+"merchant_sales/product.json";
+
+    //GET LIST PRODUCT CATEGORIES
+    public static String get_list_product_categories_URL = main_URL+"get/productCategory.json";
 
     //GET PROFILE
     public static String get_profile_URL = main_URL+"merchant_sales/profile.json";
@@ -34,6 +38,15 @@ public class UrlClass {
 
     //REJECT JOB
     public static String reject_job_URL = main_URL+"merchant_sales/reject/";
+
+    //ADD PRODUCT
+    public static String add_product_URL = main_URL+"merchant_sales/product.json";
+
+    //EDIT PRODUCT
+    public static String edit_product_URL = main_URL+"merchant_sales/product/";
+
+    //DELETE PRODUCT
+    public static String delete_product_URL = main_URL+"merchant_sales/product/";
 
 
 }

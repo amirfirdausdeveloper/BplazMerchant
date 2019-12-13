@@ -53,7 +53,8 @@ import static com.android.volley.Request.Method.PUT;
 public class SalesDetailsActivity extends AppCompatActivity {
 
     //ORDER ID
-    TextView textView_sales_id,textView_view,textView_title;
+    TextView textView_sales_id,textView_title;
+    LinearLayout textView_view;
     ImageView imageView_back;
 
     //LINEAR CUSTOMER
@@ -353,7 +354,6 @@ public class SalesDetailsActivity extends AppCompatActivity {
         TypeFaceClass.setTypeFaceButton(button_accept,getApplicationContext());
         TypeFaceClass.setTypeFaceButton(button_reject,getApplicationContext());
 
-        TypeFaceClass.setTypeFaceTextView(textView_view,getApplicationContext());
         TypeFaceClass.setTypeFaceTextView(textView_customer_name_title,getApplicationContext());
         TypeFaceClass.setTypeFaceTextView(textView_customer_phone_title,getApplicationContext());
         TypeFaceClass.setTypeFaceTextView(textView_customer_email_title,getApplicationContext());

@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,16 +19,19 @@ import com.bplaz.merchant.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class SalesListAdapter extends RecyclerView.Adapter<SalesListAdapter.ProductViewHolder> {
-
+public class SalesListAdapter extends RecyclerView.Adapter<SalesListAdapter.ProductViewHolder> implements Filterable {
+    private List<SalesListClass> mData;
     private Context mCtx;
     public static List<SalesListClass> productListClassList;
     Activity activity;
+    private List<SalesListClass> mDataListFiltered;
 
     public SalesListAdapter(Context mCtx, List<SalesListClass> jobByMonthList, Activity activity) {
+        this.mData = jobByMonthList;
         this.mCtx = mCtx;
         this.productListClassList = jobByMonthList;
         this.activity = activity;
@@ -42,6 +47,8 @@ public class SalesListAdapter extends RecyclerView.Adapter<SalesListAdapter.Prod
 
 
     }
+
+
 
     @Override
     public void onBindViewHolder(final ProductViewHolder holder, final int position) {
@@ -121,5 +128,38 @@ public class SalesListAdapter extends RecyclerView.Adapter<SalesListAdapter.Prod
         }
     }
 
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                List<SalesListClass> filteredList = new ArrayList<>();
+                if (charString.isEmpty()) {
+                    filteredList.addAll(mData);
+
+                    mDataListFiltered = filteredList;
+                } else {
+                    for (SalesListClass row : mData) {
+                        if (row.getProduct_name().toLowerCase().contains(charString.toLowerCase())) {
+                            filteredList.add(row);
+                        }
+                    }
+
+                    mDataListFiltered = filteredList;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = mDataListFiltered;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                productListClassList = (ArrayList<SalesListClass>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
+    }
 
 }

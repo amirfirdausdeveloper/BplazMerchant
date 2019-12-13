@@ -42,4 +42,15 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
+    <style name="AppSearchView" parent="Widget.AppCompat.SearchView" >
+        <!-- Text Size -->
+        <!-- Query Text Color -->
+        <item name="android:textColorPrimary">@color/colorBlack</item>
+        <item name="queryBackground">@color/colorWhite</item>
+        <!-- Hint Color -->
+        <item name="android:textColorHint">@color/colorBlack</item>
+        <!-- Icon Color -->
+        <item name="android:tint">@color/colorBlack</item>
+    </style>
+
 </resources>

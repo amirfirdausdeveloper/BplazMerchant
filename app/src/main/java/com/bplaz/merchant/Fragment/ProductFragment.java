@@ -1,6 +1,8 @@
 package com.bplaz.merchant.Fragment;
 
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -17,12 +19,15 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bplaz.merchant.Activity.CreateProductActivity;
+import com.bplaz.merchant.Activity.CreateSalesActivity;
 import com.bplaz.merchant.Adapter.ProductListAdapter;
 import com.bplaz.merchant.Class.ProductListClass;
 import com.bplaz.merchant.Class.StandardProgressDialog;
 import com.bplaz.merchant.Preferance.PreferenceManagerLogin;
 import com.bplaz.merchant.R;
 import com.bplaz.merchant.URL.UrlClass;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,19 +45,22 @@ import static com.android.volley.Request.Method.GET;
  */
 public class ProductFragment extends Fragment {
 
-    SwipeRefreshLayout mSwipeRefreshLayout;
-    RecyclerView recyclerView;
+    public static SwipeRefreshLayout mSwipeRefreshLayout;
+    static RecyclerView recyclerView;
     PreferenceManagerLogin session;
-    StandardProgressDialog standardProgressDialog;
-    String token;
-    List<ProductListClass> productListClasses;
-    private ProductListAdapter productListAdapter;
+    static StandardProgressDialog standardProgressDialog;
+    static String token;
+    static List<ProductListClass> productListClasses;
+    private static ProductListAdapter productListAdapter;
+    FloatingActionButton floatingActionButton;
+    public static Activity activity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_product, container, false);
 
+        activity = getActivity();
         //GET SESSION
         session = new PreferenceManagerLogin(getActivity());
         standardProgressDialog = new StandardProgressDialog(getActivity().getWindow().getContext());
@@ -62,6 +70,7 @@ public class ProductFragment extends Fragment {
 
         mSwipeRefreshLayout = v.findViewById(R.id.swipeToRefresh);
         recyclerView = v.findViewById(R.id.recyclerView);
+        floatingActionButton = v.findViewById(R.id.floatingActionButton);
 
         //SWIPE REFRESH
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -71,6 +80,17 @@ public class ProductFragment extends Fragment {
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
+
+        //ADD SALES
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent next = new Intent(getActivity(), CreateProductActivity.class);
+                startActivity(next);
+                getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
+        });
+
         return v;
     }
 
@@ -81,11 +101,11 @@ public class ProductFragment extends Fragment {
         getProduct();
     }
 
-    private void getProduct(){
+    public static void getProduct(){
         recyclerView.setHasFixedSize(false);
         productListClasses = new ArrayList<>();
-        productListAdapter = new ProductListAdapter(getContext(), productListClasses,getActivity());
-        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        productListAdapter = new ProductListAdapter(activity, productListClasses,activity);
+        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(horizontalLayoutManager);
         recyclerView.setAdapter(productListAdapter);
 
@@ -94,12 +114,31 @@ public class ProductFragment extends Fragment {
                     @Override
                     public void onResponse(String response) {
                         standardProgressDialog.dismiss();
+                        String base="",retail="";
                         try {
                             JSONObject object = new JSONObject(response);
 
                             JSONArray arr = new JSONArray(object.getString("products"));
                             for (int i =0; i < arr.length(); i++){
                                 JSONObject proOBJ = arr.getJSONObject(i);
+
+                                if (proOBJ.getString("pricing_partner").equals("null") || proOBJ.getString("pricing_partner").equals(null)){
+                                    retail = "";
+                                    base = "";
+                                }else{
+                                    JSONObject pricing_partner = new JSONObject(proOBJ.getString("pricing_partner"));
+                                    if(pricing_partner.getString("rsp_price").equals("null") || pricing_partner.getString("rsp_price").equals(null)){
+                                        retail = "";
+                                    }else{
+                                        retail = pricing_partner.getString("rsp_price");
+                                    }
+
+                                    if(pricing_partner.getString("base_price").equals("null") || pricing_partner.getString("base_price").equals(null)){
+                                        base = "";
+                                    }else{
+                                        base = pricing_partner.getString("base_price");
+                                    }
+                                }
 
                                 productListClasses.add(new ProductListClass(
                                         proOBJ.getString("id"),
@@ -109,10 +148,12 @@ public class ProductFragment extends Fragment {
                                         proOBJ.getString("category"),
                                         proOBJ.getString("service"),
                                         proOBJ.getString("availability"),
-                                        proOBJ.getString("image_product")
+                                        proOBJ.getString("image_product"),
+                                        retail,
+                                        base
                                 ));
 
-                                productListAdapter = new ProductListAdapter(getContext(), productListClasses,getActivity());
+                                productListAdapter = new ProductListAdapter(activity, productListClasses,activity);
                                 recyclerView.setAdapter(productListAdapter);
                             }
 
@@ -137,7 +178,7 @@ public class ProductFragment extends Fragment {
             }
 
         };
-        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+        RequestQueue requestQueue = Volley.newRequestQueue(activity);
         requestQueue.add(stringRequest);
     }
 }

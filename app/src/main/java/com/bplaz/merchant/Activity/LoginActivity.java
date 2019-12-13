@@ -7,6 +7,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
@@ -39,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
 
     StandardProgressDialog standardProgressDialog;
 
-    TextView textView_welcome;
+    TextView textView_welcome,textView_register;
 
     EditText editText_email, editText_password;
 
@@ -72,8 +73,6 @@ public class LoginActivity extends AppCompatActivity {
 
         //HARCODE EMAIL AND PASSWORD
 
-        editText_password.setText("12345");
-        editText_email.setText("amirfirdaussamsudin93@gmail.com");
 
         //BUTTON LOGIN CLICK FUNCTION
         button_login.setOnClickListener(new View.OnClickListener() {
@@ -90,6 +89,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        textView_register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("https://merchant.bplaz.com/register-partner")));
+            }
+        });
     }
 
     //ON BACK PRESS FUNCTION
@@ -106,7 +111,9 @@ public class LoginActivity extends AppCompatActivity {
         editText_email = findViewById(R.id.editText_email);
         editText_password = findViewById(R.id.editText_password);
         button_login = findViewById(R.id.button_login);
+        textView_register = findViewById(R.id.textView_register);
 
+        TypeFaceClass.setTypeFaceTextView(textView_register, getApplicationContext());
         TypeFaceClass.setTypeFaceTextViewBold(textView_welcome, getApplicationContext());
         TypeFaceClass.setTypeFaceEditText(editText_email, getApplicationContext());
         TypeFaceClass.setTypeFaceEditText(editText_password, getApplicationContext());

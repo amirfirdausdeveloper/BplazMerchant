@@ -450,12 +450,12 @@ public class CreateSalesActivity extends AppCompatActivity {
                                 if (proOBJ.getString("brand").equals("null") || proOBJ.getString("brand").equals(null)) {
                                     if(ss.equals(proOBJ.getString("product_name"))){
                                         spinner_product_id = proOBJ.getString("id");
-                                        editText_price.setText("100");
+                                        editText_price.setText(proOBJ.getString("price"));
                                     }
                                 }else{
                                     if(ss.equals(proOBJ.getString("brand")+" - "+proOBJ.getString("product_name"))){
                                         spinner_product_id = proOBJ.getString("id");
-                                        editText_price.setText("100");
+                                        editText_price.setText(proOBJ.getString("price"));
                                     }
                                 }
                             }

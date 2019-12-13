@@ -9,9 +9,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
@@ -19,9 +21,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bplaz.merchant.Activity.CreateSalesActivity;
-import com.bplaz.merchant.Adapter.ProductListAdapter;
 import com.bplaz.merchant.Adapter.SalesListAdapter;
-import com.bplaz.merchant.Class.ProductListClass;
 import com.bplaz.merchant.Class.SalesListClass;
 import com.bplaz.merchant.Class.StandardProgressDialog;
 import com.bplaz.merchant.Preferance.PreferenceManagerLogin;
@@ -53,7 +53,7 @@ public class SalesFragment extends Fragment {
     List<SalesListClass> salesListClasses;
     private SalesListAdapter salesListAdapter;
     FloatingActionButton floatingActionButton;
-
+    String totalCOunt;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -75,7 +75,7 @@ public class SalesFragment extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getList();
+                getTotal();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -89,13 +89,27 @@ public class SalesFragment extends Fragment {
                 getActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
+        getTotal();
 
-        getList();
+        //SEARCHING
+        androidx.appcompat.widget.SearchView simpleSearchView = v.findViewById(R.id.searchView);
+        simpleSearchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d("SUBMIT",query);
+                return false;
+            }
 
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                salesListAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
         return v;
     }
 
-    private void getList(){
+    private void getList(String totalCOunt){
         recyclerView.setHasFixedSize(false);
         salesListClasses = new ArrayList<>();
         salesListAdapter = new SalesListAdapter(getContext(), salesListClasses,getActivity());
@@ -103,7 +117,7 @@ public class SalesFragment extends Fragment {
         recyclerView.setLayoutManager(horizontalLayoutManager);
         recyclerView.setAdapter(salesListAdapter);
 
-        StringRequest stringRequest = new StringRequest(GET, UrlClass.get_sales_URL,
+        StringRequest stringRequest = new StringRequest(GET, UrlClass.get_sales_URL+"?limit="+totalCOunt,
                 new com.android.volley.Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -223,4 +237,48 @@ public class SalesFragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
         requestQueue.add(stringRequest);
     }
+
+    private void getTotal(){
+        recyclerView.setHasFixedSize(false);
+        salesListClasses = new ArrayList<>();
+        salesListAdapter = new SalesListAdapter(getContext(), salesListClasses,getActivity());
+        LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(horizontalLayoutManager);
+        recyclerView.setAdapter(salesListAdapter);
+
+        StringRequest stringRequest = new StringRequest(GET, UrlClass.get_sales_URL,
+                new com.android.volley.Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        standardProgressDialog.dismiss();
+                        try {
+                            JSONObject object = new JSONObject(response);
+                            JSONObject sales = new JSONObject(object.getString("paging"));
+                            totalCOunt = sales.getString("count");
+                            getList(totalCOunt);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new com.android.volley.Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        standardProgressDialog.dismiss();
+                    }
+                }) {
+
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Accept", "application/json");
+                headers.put("Content-Type", "application/x-www-form-urlencoded");
+                headers.put("Authorization", "Bearer "+token);
+                return headers;
+            }
+
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+        requestQueue.add(stringRequest);
+    }
+
 }

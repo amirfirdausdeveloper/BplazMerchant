@@ -29,7 +29,7 @@
             android:layout_marginLeft="25dp"
             android:gravity="center_vertical"
             android:text="PROFILE"
-            android:textColor="@color/colorWhite"
+            android:textColor="@color/colorKuningClick2"
             android:textSize="18sp" />
     </LinearLayout>
 
