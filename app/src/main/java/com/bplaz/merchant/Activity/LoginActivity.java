@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,6 +27,7 @@ import com.bplaz.merchant.Class.TypeFaceClass;
 import com.bplaz.merchant.Preferance.PreferenceManagerLogin;
 import com.bplaz.merchant.R;
 import com.bplaz.merchant.URL.UrlClass;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -165,6 +167,8 @@ public class LoginActivity extends AppCompatActivity {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("email", editText_email.getText().toString());
                 params.put("password", editText_password.getText().toString());
+                params.put("notification_key", FirebaseInstanceId.getInstance().getToken());
+                Log.d("param",params.toString());
                 return params;
             }
         };

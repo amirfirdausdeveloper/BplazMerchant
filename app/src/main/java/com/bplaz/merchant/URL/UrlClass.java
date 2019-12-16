@@ -3,8 +3,7 @@ package com.bplaz.merchant.URL;
 public class UrlClass {
 
     //MAIN URL
-    public static String main_URL = "https://dev." +
-            "merchant.bplaz.com/api/v1/";
+    public static String main_URL = "https://dev.merchant.bplaz.com/api/v1/";
 
     //LOGIN
     public static String login_URL = main_URL+"merchant_sales/token.json";

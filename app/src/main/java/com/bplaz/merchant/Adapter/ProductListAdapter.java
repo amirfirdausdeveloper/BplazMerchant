@@ -134,7 +134,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
         if(productListClass.getImageURL().equals(null) || productListClass.getImageURL().equals("null") || productListClass.getImageURL().equals("")){
 
         }else {
-            Picasso.get().load("https://merchant.bplaz.com/"+productListClass.getImageURL()).networkPolicy(NetworkPolicy.NO_CACHE)
+            Picasso.get().load("https://dev.merchant.bplaz.com/"+productListClass.getImageURL()).networkPolicy(NetworkPolicy.NO_CACHE)
                     .memoryPolicy(MemoryPolicy.NO_CACHE).into(holder.imageView_product);
         }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -177,6 +177,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
                                 next.putExtra("product_name",productListClass.getProductNAME());
                                 next.putExtra("product_brand",productListClass.getProductBRAND());
                                 next.putExtra("product_manu",productListClass.getProductMANUFACTURE());
+                                next.putExtra("image",productListClass.getImageURL());
                                 next.putExtra("service",productListClass.getSevice());
                                 next.putExtra("service_type",productListClass.getServiceTYPE());
                                 next.putExtra("availability",productListClass.getAvailable());

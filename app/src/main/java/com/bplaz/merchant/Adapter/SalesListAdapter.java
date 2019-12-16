@@ -141,7 +141,9 @@ public class SalesListAdapter extends RecyclerView.Adapter<SalesListAdapter.Prod
                     mDataListFiltered = filteredList;
                 } else {
                     for (SalesListClass row : mData) {
-                        if (row.getProduct_name().toLowerCase().contains(charString.toLowerCase())) {
+                        if (charString.toLowerCase().contains(row.getProduct_name().toLowerCase())) {
+                            filteredList.add(row);
+                        }else if (charString.toLowerCase().contains(row.getName_customer().toLowerCase())) {
                             filteredList.add(row);
                         }
                     }

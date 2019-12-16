@@ -38,6 +38,9 @@ import com.bplaz.merchant.Class.TypeFaceClass;
 import com.bplaz.merchant.Preferance.PreferenceManagerLogin;
 import com.bplaz.merchant.R;
 import com.bplaz.merchant.URL.UrlClass;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner;
 
 import org.json.JSONArray;
@@ -73,6 +76,7 @@ public class CreateProductActivity extends AppCompatActivity {
     ImageView imageView_back;
     String intent_id;
     String status;
+    LinearLayout linear_image_hide;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,20 +133,20 @@ public class CreateProductActivity extends AppCompatActivity {
 
 
         //TAKE IMAGE
-        textView_image_click.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent, 1);
-            }
-        });
-        imageView_photo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent, 1);
-            }
-        });
+//        textView_image_click.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+//                startActivityForResult(intent, 1);
+//            }
+//        });
+//        imageView_photo.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+//                startActivityForResult(intent, 1);
+//            }
+//        });
 
         //BUTTON SUBMIT
         button_submit.setOnClickListener(new View.OnClickListener() {
@@ -202,6 +206,7 @@ public class CreateProductActivity extends AppCompatActivity {
 
         //IF EDIT OR ADD
         if(getIntent().hasExtra("id")){
+            linear_image_hide.setVisibility(View.VISIBLE);
             editText_service_name.setEnabled(false);
             spinner_service_type.setEnabled(false);
             editText_brand.setEnabled(false);
@@ -272,6 +277,17 @@ public class CreateProductActivity extends AppCompatActivity {
                         }
                     }
 
+                    Log.d("yaws","https://dev.merchant.bplaz.com/"+getIntent().getStringExtra("image"));
+
+                    if(getIntent().getStringExtra("image").equals("null")){
+                        linear_image_hide.setVisibility(View.GONE);
+                    }else {
+                        linear_image_hide.setVisibility(View.VISIBLE);
+                        Picasso.get().load("https://dev.merchant.bplaz.com/"+getIntent().getStringExtra("image")).networkPolicy(NetworkPolicy.NO_CACHE)
+                                .memoryPolicy(MemoryPolicy.NO_CACHE).into(imageView_photo);
+                    }
+
+
                     if(getIntent().getStringExtra("availability").equals("1")){
                         checkBox_stock_available.setChecked(true);
                     }else{
@@ -284,6 +300,7 @@ public class CreateProductActivity extends AppCompatActivity {
             }, 1000);
         }else {
             status = "add";
+            linear_image_hide.setVisibility(View.GONE);
         }
     }
 
@@ -526,8 +543,6 @@ public class CreateProductActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("service","1");
-                params.put("product_name", editText_service_name.getText().toString());
                 if(checkBox_stock_available.isChecked()){
                     params.put("availability", "1");
                 }else{
@@ -535,39 +550,6 @@ public class CreateProductActivity extends AppCompatActivity {
                 }
                 params.put("pricing[rsp_price]", editText_retail_price.getText().toString());
                 params.put("pricing[base_price]", editText_base_price.getText().toString());
-
-                if(spinner_service_type.getSelectedItem().toString().equals("Accessories")){
-                    params.put("category", "13");
-                }
-                if(spinner_service_type.getSelectedItem().toString().equals("Battery")){
-                    params.put("category", "5");
-                }
-                if(spinner_service_type.getSelectedItem().toString().equals("Else")){
-                    params.put("category", "16");
-                }
-                if(spinner_service_type.getSelectedItem().toString().equals("Lock Smith")){
-                    params.put("category", "15");
-                }
-                if(spinner_service_type.getSelectedItem().toString().equals("Petrol")){
-                    params.put("category", "14");
-                }
-                if(spinner_service_type.getSelectedItem().toString().equals("Repair")){
-                    params.put("category", "12");
-                }
-                if(spinner_service_type.getSelectedItem().toString().equals("Services")){
-                    params.put("category", "11");
-                }
-                if(spinner_service_type.getSelectedItem().toString().equals("Spare Part")){
-                    params.put("category", "9");
-                }
-                if(spinner_service_type.getSelectedItem().toString().equals("Towing")){
-                    params.put("category", "7");
-                }
-                if(spinner_service_type.getSelectedItem().toString().equals("Tyre")){
-                    params.put("category", "6");
-                }
-
-
                 return params;
             }
 
@@ -726,6 +708,8 @@ public class CreateProductActivity extends AppCompatActivity {
         textView_base = findViewById(R.id.textView_base);
         editText_retail_price = findViewById(R.id.editText_retail_price);
         editText_base_price = findViewById(R.id.editText_base_price);
+
+        linear_image_hide = findViewById(R.id.linear_image_hide);
 
     }
 
