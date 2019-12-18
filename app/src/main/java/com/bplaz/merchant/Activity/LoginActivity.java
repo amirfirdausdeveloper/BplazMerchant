@@ -1,5 +1,6 @@
 package com.bplaz.merchant.Activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -22,11 +23,17 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bplaz.merchant.BuildConfig;
 import com.bplaz.merchant.Class.StandardProgressDialog;
 import com.bplaz.merchant.Class.TypeFaceClass;
 import com.bplaz.merchant.Preferance.PreferenceManagerLogin;
 import com.bplaz.merchant.R;
 import com.bplaz.merchant.URL.UrlClass;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONException;
@@ -51,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
     private static long back_pressed;
 
     PreferenceManagerLogin session;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +105,49 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("https://merchant.bplaz.com/register-partner")));
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("Version");
+        String versionName = BuildConfig.VERSION_NAME;
+
+        mDatabase.orderByChild("version").equalTo(versionName)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+
+                        }else {
+                            new AlertDialog.Builder(LoginActivity.this)
+                                    .setCancelable(false)
+                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .setMessage("Please Update the apps")
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String url = "https://drive.google.com/drive/u/1/folders/1RPm8Wrxnk0uArS5NBdhD7EDyxWNtOG17";
+                                            Intent i = new Intent(Intent.ACTION_VIEW);
+                                            i.setData(Uri.parse(url));
+                                            startActivity(i);
+                                        }
+                                    })
+                                    .setNegativeButton("Not Now", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            finish();
+                                        }
+                                    })
+                                    .show();
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+
+
     }
 
     //ON BACK PRESS FUNCTION

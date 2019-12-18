@@ -3,7 +3,10 @@ package com.bplaz.merchant.Activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.MenuItem;
@@ -19,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.bplaz.merchant.BuildConfig;
 import com.bplaz.merchant.Class.TypeFaceClass;
 import com.bplaz.merchant.Fragment.DashboardFragment;
 import com.bplaz.merchant.Fragment.ManageFragment;
@@ -33,6 +37,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomnavigation.LabelVisibilityMode;
 import com.google.android.material.internal.BaselineLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 
@@ -101,10 +110,49 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
         getLocation();
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("Version");
+        String versionName = BuildConfig.VERSION_NAME;
+
+        mDatabase.orderByChild("version").equalTo(versionName)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+
+                        }else {
+                            new AlertDialog.Builder(MainActivity.this)
+                                    .setCancelable(false)
+                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .setMessage("Please Update the apps")
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String url = "https://drive.google.com/drive/u/1/folders/1RPm8Wrxnk0uArS5NBdhD7EDyxWNtOG17";
+                                            Intent i = new Intent(Intent.ACTION_VIEW);
+                                            i.setData(Uri.parse(url));
+                                            startActivity(i);
+                                        }
+                                    })
+                                    .setNegativeButton("Not Now", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            finish();
+                                        }
+                                    })
+                                    .show();
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+
+
     }
 
     public void getLocation(){
